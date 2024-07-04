@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common'
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException
+} from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { UserEntity } from './user.entity'
 import { Repository } from 'typeorm'
@@ -8,13 +12,14 @@ import { Hash } from 'src/utils/hash'
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>
   ) {}
 
   async getUserById(id: number) {
     try {
       const checkUser = await this.userRepository.findOneBy({ id: id })
-      if(!checkUser) {
+      if (!checkUser) {
         throw new NotFoundException('Không tìm thấy người dùng')
       }
     } catch (e) {
@@ -24,7 +29,9 @@ export class UserService {
 
   async createUser(createUser: CreateUserDto) {
     try {
-      const checkEmail = await this.userRepository.findOneBy({ email: createUser.email })
+      const checkEmail = await this.userRepository.findOneBy({
+        email: createUser.email
+      })
 
       if (checkEmail) {
         throw new ConflictException('')
@@ -37,6 +44,21 @@ export class UserService {
       const newUser = this.userRepository.create(dataNewUser)
       await this.userRepository.save(newUser)
       return newUser
+    } catch (e) {
+      throw e
+    }
+  }
+
+  async login(loginDto: any) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { email: loginDto.email},
+        select: ['id', 'email', 'password']
+      })
+      if (!user) {
+        throw new NotFoundException('Người dùng không tồn tại')
+      }
+      return user
     } catch (e) {
       throw e
     }

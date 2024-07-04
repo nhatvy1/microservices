@@ -1,6 +1,8 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { CreateUserDto } from './dto/create.user.dto';
+import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common'
+import { AuthService } from './auth.service'
+import { CreateUserDto } from './dto/create.user.dto'
+import { Response } from 'src/utils/response'
+import { LoginDto } from './dto/login.dto'
 
 @Controller('auth')
 export class AuthController {
@@ -10,17 +12,27 @@ export class AuthController {
   async register(@Body() createUser: CreateUserDto) {
     try {
       const result = await this.authService.createUser(createUser)
-    } catch(e) {
-      throw e 
+      return Response({
+        message: 'Đăng ký thành công',
+        statusCode: HttpStatus.OK,
+        result
+      })
+    } catch (e) {
+      throw e
     }
   }
 
   @Post('login')
-  login() {
+  async login(@Body() loginDto: LoginDto) {
     try {
-
-    } catch(e) {
-      throw e 
+      const result = await this.authService.login(loginDto)
+      return Response({
+        message: 'Đăng nhập thành công',
+        statusCode: HttpStatus.OK,
+        result
+      })
+    } catch (e) {
+      throw e
     }
   }
 }

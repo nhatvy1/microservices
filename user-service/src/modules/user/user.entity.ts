@@ -1,6 +1,7 @@
 import { Exclude } from 'class-transformer'
-import { Column, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
+@Entity()
 export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number
@@ -14,7 +15,6 @@ export class UserEntity {
   @Column({ type: String, nullable: false })
   lastName: string
 
-  @Exclude()
-  @Column({ type: String, nullable: false })
+  @Column({ type: String, nullable: false, select: false })
   password: string
 }
